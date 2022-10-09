@@ -14,9 +14,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          path: drone_show_addon
                 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: drone_show_addon
-          path: drone-show-src
+          path: drone_show_addon
