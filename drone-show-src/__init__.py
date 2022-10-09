@@ -9,12 +9,12 @@ from . import operators, ui
 bl_info = {
     "name": "Drone show animation (.csv)",
     "author": "Artem Vasiunik & Arthur Golubtsov",
-    "version": (0, 7, 1),
+    "version": (1, 0, 0),
     "blender": (3, 2, 2),
     "location": "File > Export > Drone show animation (.csv)",
     "description": "Export > Drone show animation (.csv)",
-    "doc_url": "https://github.com/CopterExpress/clever-show/blob/master/blender-addon/README.md",
-    "tracker_url": "https://github.com/CopterExpress/clever-show/issues",
+    "doc_url": "https://github.com/DroneLegion/BlenderDroneShow/blob/master/README.md",
+    "tracker_url": "https://github.com/DroneLegion/BlenderDroneShow/issues",
     "category": "Import-Export",
 }
 
