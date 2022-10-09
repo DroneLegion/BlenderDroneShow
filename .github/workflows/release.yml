@@ -1,0 +1,29 @@
+name: Release
+
+on:
+  push:
+    push:
+      tags:
+        - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          path: drone_show_addon
+
+      - name: Create Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          filename: 'drone_show_addon.zip'
+          directory: 'drone_show_addon'
+          exclusions: '*.git*'
+
+      - name: Upload Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: 'drone_show_addon.zip'
+          token: ${{ secrets.GH_TOKEN }}
