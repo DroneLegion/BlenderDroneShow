@@ -20,6 +20,7 @@ bl_info = {
 
 
 class DroneShowProperties(PropertyGroup):
+    # Check properties
     check_led: BoolProperty(
         name="Check LEDs",
         description="Check LEDs material on drones",
@@ -63,7 +64,7 @@ class DroneShowProperties(PropertyGroup):
     detailed_warnings: bpy.props.BoolProperty(
         name="Show detailed warnings",
         description="Show detailed animation check warnings",
-        default=False,
+        default=True,
     )
 
 

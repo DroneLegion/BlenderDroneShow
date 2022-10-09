@@ -162,12 +162,13 @@ class CheckSwarmAnimation(Operator):
                 range_max = max(speeds)
                 max_speed = max(max_speed, range_max)
 
-                self.report(
-                    {"WARNING"},
-                    f"{format_frame_range(frame_range)}: "
-                    f"Speed exceeds {drone_show.speed_limit:.1f}m/s "
-                    f"(max {range_max:.1f}m/s) {format_drones(drones)}",
-                )
+                if drone_show.detailed_warnings:
+                    self.report(
+                        {"WARNING"},
+                        f"{format_frame_range(frame_range)}: "
+                        f"Speed exceeds {drone_show.speed_limit:.1f}m/s "
+                        f"(max {range_max:.1f}m/s) {format_drones(drones)}",
+                    )
 
         min_distance = float("inf")
         if distance_warnings:
@@ -177,13 +178,13 @@ class CheckSwarmAnimation(Operator):
             ):
                 range_min = max(distances)
                 min_distance = min(min_distance, range_min)
-
-                self.report(
-                    {"WARNING"},
-                    f"{format_frame_range(frame_range)}: "
-                    f"Distance is less than {drone_show.distance_limit:.1f}m "
-                    f"(min {range_min:.1f}m) {format_drones(drones)}",
-                )
+                if drone_show.detailed_warnings:
+                    self.report(
+                        {"WARNING"},
+                        f"{format_frame_range(frame_range)}: "
+                        f"Distance is less than {drone_show.distance_limit:.1f}m "
+                        f"(min {range_min:.1f}m) {format_drones(drones)}",
+                    )
 
         if led_warnings:
             no_warnings = False
