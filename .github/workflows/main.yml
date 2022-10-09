@@ -20,7 +20,7 @@ jobs:
         with:
           type: zip
           filename: drone_show_addon.zip
-          directory: 'drone-show-src'
+          exclusions: '*.git*'
           
       - name: Upload artifact
         uses: actions/upload-artifact@v3
