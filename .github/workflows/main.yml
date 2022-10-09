@@ -14,16 +14,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
-      - name: Archive Release
-        uses: thedoctor0/zip-release@main
-        with:
-          type: zip
-          filename: drone_show_addon.zip
-          exclusions: '*.git*'
-          
+                
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: drone_show_addon
-          path: drone_show_addon.zip
+          path: drone-show-src
