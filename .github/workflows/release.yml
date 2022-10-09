@@ -18,7 +18,6 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           filename: 'drone_show_addon.zip'
-          directory: 'drone_show_addon'
           exclusions: '*.git*'
 
       - name: Upload Release
