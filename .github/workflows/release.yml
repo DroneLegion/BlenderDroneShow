@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          path: drone_show_addon
 
       - name: Create Archive Release
         uses: thedoctor0/zip-release@master
