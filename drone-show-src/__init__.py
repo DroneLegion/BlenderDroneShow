@@ -1,7 +1,13 @@
 import bpy
-from bpy.props import (BoolProperty, CollectionProperty, EnumProperty,
-                       FloatProperty, IntProperty, PointerProperty,
-                       StringProperty)
+from bpy.props import (
+    BoolProperty,
+    CollectionProperty,
+    EnumProperty,
+    FloatProperty,
+    IntProperty,
+    PointerProperty,
+    StringProperty,
+)
 from bpy.types import PropertyGroup
 
 from . import operators, ui

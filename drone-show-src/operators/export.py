@@ -1,4 +1,6 @@
 import csv
+import io
+from contextlib import redirect_stdout
 from pathlib import Path
 
 import bpy
@@ -9,11 +11,13 @@ from bpy_extras.io_utils import ExportHelper
 from ..helpers import animation as animation_helpers
 from ..helpers import drone as drone_helpers
 from ..helpers import led as led_helpers
+from ..ui import draw_check_properties
 
 
 class ExportSwarmAnimation(Operator, ExportHelper):
     bl_idname = "drone_show.export"
     bl_label = "Export drone show animation"
+    bl_description = "Export drone show animation to CSV files"
     filename_ext = ""
     use_filter_folder = True
 
@@ -38,10 +42,9 @@ class ExportSwarmAnimation(Operator, ExportHelper):
         col = layout.column()
         col.prop(self, "perform_checks")
         if self.perform_checks:
-            col.prop(drone_show, "detailed_warnings")
+            draw_check_properties(drone_show, col)
             col.separator()
-            col.prop(drone_show, "speed_limit")
-            col.prop(drone_show, "distance_limit")
+            col.operator("drone_show.check", text="Check animation now")
         col.separator()
 
     def execute(self, context):
@@ -49,6 +52,23 @@ class ExportSwarmAnimation(Operator, ExportHelper):
         base_dir.mkdir(exist_ok=True)
 
         drone_objects = drone_helpers.get_drone_objects(context)
+
+        if not drone_objects:
+            self.report({"ERROR"}, "No drone objects found")
+            return {"CANCELLED"}
+
+        if self.perform_checks:
+            # This is done because Blender doesn't show reports from operators invoked from the code
+            stdout = io.StringIO()
+            with redirect_stdout(stdout):
+                bpy.ops.drone_show.check()
+
+            stdout.seek(0)
+            reports = stdout.readlines()
+            for report in reports:
+                level, message = report.split(": ", 1)
+                self.report({level.upper()}, message)
+
         frame_start = context.scene.frame_start
         frame_end = context.scene.frame_end
 
