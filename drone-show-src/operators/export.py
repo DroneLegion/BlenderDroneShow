@@ -65,9 +65,9 @@ class ExportSwarmAnimation(Operator, ExportHelper):
 
             stdout.seek(0)
             reports = stdout.readlines()
-            for report in reports:
-                level, message = report.split(": ", 1)
-                self.report({level.upper()}, message)
+            for report in reports[:-1]:  # Don't include the last summary report
+                _, message = report.split(": ", 1)
+                self.report({"WARNING"}, message)
 
         frame_start = context.scene.frame_start
         frame_end = context.scene.frame_end

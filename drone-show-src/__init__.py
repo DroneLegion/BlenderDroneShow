@@ -15,7 +15,7 @@ from . import operators, ui
 bl_info = {
     "name": "Drone show animation (.csv)",
     "author": "Artem Vasiunik & Arthur Golubtsov",
-    "version": (1, 1, 0),
+    "version": (1, 1, 2),
     "blender": (3, 2, 2),
     "location": "File > Export > Drone show animation (.csv)",
     "description": "Export > Drone show animation (.csv)",
