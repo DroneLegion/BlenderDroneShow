@@ -1,5 +1,6 @@
 from bpy.types import Object
 
 
-def get_drone_objects(context) -> list[Object]:
-    return [obj for obj in context.scene.objects if obj.drone.is_drone]
+def get_drone_objects(context, selected=False) -> list[Object]:
+    objects = context.selected_objects if selected else context.scene.objects
+    return [obj for obj in objects if obj.drone.is_drone]

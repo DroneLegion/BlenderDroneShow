@@ -92,7 +92,8 @@ classes = (
     DroneShowProperties,
     DroneObjectProperties,
     DroneLedProperties,
-    operators.ExportSwarmAnimation,
+    operators.ExportAnimation,
+    operators.ExportAnimationChecksPanel,
     operators.CheckSwarmAnimation,
     operators.AssignDrones,
     operators.SelectDrones,
@@ -107,7 +108,7 @@ classes = (
 
 def menu_func(self, context):
     self.layout.operator(
-        operators.ExportSwarmAnimation.bl_idname, text="Drone show animation (.csv)"
+        operators.ExportAnimation.bl_idname, text="Drone show animation (.csv)"
     )
 
 

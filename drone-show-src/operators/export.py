@@ -5,7 +5,7 @@ from pathlib import Path
 
 import bpy
 from bpy.props import BoolProperty, FloatProperty, IntProperty, StringProperty
-from bpy.types import Operator
+from bpy.types import Operator, Panel
 from bpy_extras.io_utils import ExportHelper
 
 from ..helpers import animation as animation_helpers
@@ -14,7 +14,7 @@ from ..helpers import led as led_helpers
 from ..ui import draw_check_properties
 
 
-class ExportSwarmAnimation(Operator, ExportHelper):
+class ExportAnimation(Operator, ExportHelper):
     bl_idname = "drone_show.export"
     bl_label = "Export drone show animation"
     bl_description = "Export drone show animation to CSV files"
@@ -37,15 +37,7 @@ class ExportSwarmAnimation(Operator, ExportHelper):
 
     def draw(self, context):
         drone_show = context.scene.drone_show
-
         layout = self.layout
-        col = layout.column()
-        col.prop(self, "perform_checks")
-        if self.perform_checks:
-            draw_check_properties(drone_show, col)
-            col.separator()
-            col.operator("drone_show.check", text="Check animation now")
-        col.separator()
 
     def execute(self, context):
         base_dir = Path(self.filepath)
@@ -112,3 +104,30 @@ class ExportSwarmAnimation(Operator, ExportHelper):
             f"Exported animation for {len(drone_objects)} drones ({frame_end - frame_start + 1} frames)",
         )
         return {"FINISHED"}
+
+
+class ExportAnimationChecksPanel(Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Animation Checks"
+    bl_options = set()
+
+    @classmethod
+    def poll(cls, context):
+        operator = context.space_data.active_operator
+        return operator.bl_idname == "DRONE_SHOW_OT_export"
+
+    def draw_header(self, context):
+        operator = context.space_data.active_operator
+        self.layout.prop(operator, "perform_checks", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        drone_show = context.scene.drone_show
+        operator = context.space_data.active_operator
+
+        layout.active = operator.perform_checks
+        draw_check_properties(drone_show, layout)
+        layout.separator()
+        layout.operator("drone_show.check", text="Check animation now")
+

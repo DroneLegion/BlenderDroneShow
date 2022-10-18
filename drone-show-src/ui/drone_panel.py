@@ -22,9 +22,6 @@ class DronePanel(Panel):
         drone = context.object.drone
         layout.enabled = drone.is_drone
 
-        # layout.use_property_split = True
-        # layout.use_property_decorate = True
-
 
 class DroneCoordsPanel(Panel):
     bl_idname = "OBJECT_PT_drone_coords"

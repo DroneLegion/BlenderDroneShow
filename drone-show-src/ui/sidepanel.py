@@ -23,7 +23,7 @@ class CheckPanel(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Drone show"
-    bl_label = "Pre-flight checks"
+    bl_label = "Animation checks"
 
     def draw(self, context):
         layout = self.layout
