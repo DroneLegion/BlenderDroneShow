@@ -73,6 +73,17 @@ class DroneShowProperties(PropertyGroup):
         default=True,
     )
 
+    # Led properties
+    led_color: bpy.props.FloatVectorProperty(
+        name="LED color",
+        description="Color of the LED to set",
+        subtype="COLOR",
+        size=4,
+        min=0.0,
+        max=1.0,
+        default=(1.0, 1.0, 1.0, 1.0),
+    )
+
 
 class DroneObjectProperties(PropertyGroup):
     is_drone: BoolProperty(
@@ -97,11 +108,13 @@ classes = (
     operators.CheckSwarmAnimation,
     operators.AssignDrones,
     operators.SelectDrones,
+    operators.SetLedColor,
     ui.DronePanel,
     ui.DroneCoordsPanel,
     ui.DroneLedPanel,
     ui.LedPanel,
     ui.DroneOperatorsPanel,
+    ui.LedOperatorsPanel,
     ui.CheckPanel,
 )
 

@@ -17,7 +17,7 @@ def get_led_material(obj: Object) -> Material:
 
 def get_material_color(material: Material) -> tuple[int, int, int]:
     if material.use_nodes:
-        value = _get_node_color(material)
+        value = _get_material_node_input(material).default_value
     else:
         value = material.diffuse_color
 
@@ -26,7 +26,7 @@ def get_material_color(material: Material) -> tuple[int, int, int]:
     return cast(tuple[int, int, int], color)
 
 
-def _get_node_color(material: Material):
+def _get_material_node_input(material: Material):
     supported_nodes = ("EMISSION", "BSDF_DIFFUSE", "BSDF_PRINCIPLED")
     nodes = material.node_tree.nodes
     links = material.node_tree.links
@@ -36,7 +36,22 @@ def _get_node_color(material: Material):
             input_name = (
                 "Base Color" if link.from_node.type == "BSDF_PRINCIPLED" else "Color"
             )
-            return link.from_node.inputs[input_name].default_value
+            return link.from_node.inputs[input_name]
     raise LedError(
         f"Could not detect color of the node system for LED material '{material.name}'"
     )
+
+
+def set_material_color(material: Material, color: tuple[float, float, float, float], keyframe: Optional[int] = None):
+    # color = tuple(component / 255 for component in color)
+
+    if material.use_nodes:
+        color_input = _get_material_node_input(material)
+        color_input.default_value = color
+        if keyframe is not None:
+            color_input.keyframe_insert("default_value", frame=keyframe)
+
+    else:
+        material.diffuse_color = color
+        if keyframe is not None:
+            material.keyframe_insert("diffuse_color", frame=keyframe)
