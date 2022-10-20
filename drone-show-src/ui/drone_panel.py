@@ -12,7 +12,7 @@ class DronePanel(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None
+        return context.object is not None and not context.object.aruco.is_aruco
 
     def draw_header(self, context):
         self.layout.prop(context.object.drone, "is_drone", text="")

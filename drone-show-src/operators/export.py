@@ -107,8 +107,8 @@ class ExportAnimation(Operator, ExportHelper):
 
 
 class ExportAnimationChecksPanel(Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
+    bl_space_type = "FILE_BROWSER"
+    bl_region_type = "TOOL_PROPS"
     bl_label = "Animation Checks"
     bl_options = set()
 
@@ -130,4 +130,3 @@ class ExportAnimationChecksPanel(Panel):
         draw_check_properties(drone_show, layout)
         layout.separator()
         layout.operator("drone_show.check", text="Check animation now")
-

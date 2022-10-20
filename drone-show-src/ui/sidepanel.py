@@ -49,3 +49,17 @@ class CheckPanel(Panel):
         layout.separator()
         col = layout.column(align=True)
         col.operator("drone_show.check")
+
+
+class ArucoOperatorsPanel(Panel):
+    bl_idname = "VIEW3D_PT_aruco_operators"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Drone show"
+    bl_label = "Aruco operators"
+
+    def draw(self, context):
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.operator("drone_show.add_aruco")
