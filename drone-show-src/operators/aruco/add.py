@@ -1,6 +1,7 @@
 import bpy
 from bpy.types import Operator
 from bpy_extras.object_utils import AddObjectHelper, object_data_add
+from mathutils import Vector, Matrix
 
 from ...helpers import aruco as aruco_helpers
 
@@ -45,6 +46,23 @@ class AddAruco(Operator, AddObjectHelper):
         max=1000,
     )
 
+    add_rim: bpy.props.BoolProperty(
+        name="Add white rim",
+        description="Add white rim around the marker",
+        default=True,
+    )
+
+    rim_size: bpy.props.FloatProperty(
+        name="Rim size",
+        description="Size of the white rim around the marker",
+        unit="LENGTH",
+        default=0.05,
+        min=0,
+        soft_min=0.01,
+        soft_max=1,
+        step=1,
+    )
+
     @classmethod
     def poll(cls, context):
         if not super().poll(context):
@@ -53,14 +71,45 @@ class AddAruco(Operator, AddObjectHelper):
             return context.object.mode == "OBJECT"
         return True
 
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.prop(self, "align")
+        layout.prop(self, "location")
+        layout.prop(self, "rotation")
+        layout.prop(self, "size")
+        layout.prop(self, "dictionary")
+        layout.prop(self, "marker_id")
+
+        row = layout.row(heading="White rim")
+        row.prop(self, "add_rim", text="")
+        subrow = row.row()
+        subrow.enabled = self.add_rim
+        subrow.prop(self, "rim_size", text="Size")
+
     def execute(self, context):
         mesh = aruco_helpers.get_marker_mesh()
         aruco_object = object_data_add(context, mesh, operator=self)
         aruco_object.name = f"Aruco {self.marker_id}"
         aruco_object.show_name = True
 
-        _, _, current_z = aruco_object.dimensions
-        aruco_object.dimensions = [self.size, self.size, current_z]
+        aruco_object.dimensions = [self.size, self.size, 0]
+
+        if self.add_rim:
+            mesh = aruco_helpers.get_marker_mesh()
+            rim_object = object_data_add(context, mesh, operator=self)
+            rim_object.name = "Aruco marker rim"
+
+            bpy.context.evaluated_depsgraph_get().update()
+            rim_object.parent = aruco_object
+            rim_object.matrix_parent_inverse = aruco_object.matrix_world.inverted()
+
+            rim_object.matrix_local = Matrix.Translation(Vector((0, 0, -0.001)))
+            rim_object.dimensions = [self.size + self.rim_size*2, self.size + self.rim_size*2, 0]
+
+            rim_object.select_set(False)
+            aruco_object.select_set(True)
+            bpy.context.view_layer.objects.active = aruco_object
 
         uv_layer = aruco_object.data.uv_layers.new(name="Aruco")
         uv_layer.data[0].uv = (0, 0)

@@ -42,11 +42,35 @@ class ImportAruco(Operator, ImportHelper):
         default="4x4_1000",
     )
 
+    add_rim: bpy.props.BoolProperty(
+        name="Add white rim",
+        description="Add white rim around the marker",
+        default=True,
+    )
+
+    rim_size: bpy.props.FloatProperty(
+        name="Rim size",
+        description="Size of the white rim around the marker",
+        unit="LENGTH",
+        default=0.05,
+        min=0,
+        soft_min=0.01,
+        soft_max=1,
+        step=1,
+    )
+
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
 
         row = layout.row()
         row.prop(self, "dictionary")
+
+        row = layout.row(heading="White rim")
+        row.prop(self, "add_rim", text="")
+        subrow = row.row()
+        subrow.enabled = self.add_rim
+        subrow.prop(self, "rim_size", text="Size")
 
     def execute(self, context):
         path = Path(self.filepath)
@@ -76,6 +100,8 @@ class ImportAruco(Operator, ImportHelper):
                 dictionary=self.dictionary,
                 location=(x, y, z),
                 rotation=(rot_x, rot_y, rot_z),
+                add_rim=self.add_rim,
+                rim_size=self.rim_size,
             )
 
         return {"FINISHED"}

@@ -117,6 +117,8 @@ class ExportAnimationChecksPanel(Panel):
     @classmethod
     def poll(cls, context):
         operator = context.space_data.active_operator
+        if operator is None:
+            return False
         return operator.bl_idname == "DRONE_SHOW_OT_export"
 
     def draw_header(self, context):

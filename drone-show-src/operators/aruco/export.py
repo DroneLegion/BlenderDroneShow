@@ -50,7 +50,7 @@ class ExportAruco(Operator, ExportHelper):
             data = (round(item, 3) for item in (size, x, y, z, rot_z, rot_y, rot_x))
             markers.append((marker_id, ) + tuple(data))
 
-        headers = ("id", "length", "x", "y", "z", "rot_z", "rot_y", "rot_x")
+        headers = ("# id", "length", "x", "y", "z", "rot_z", "rot_y", "rot_x")
         with path.open("w") as f:
             f.write("".join([f"{item: <8}" for item in headers])+"\n")
             for marker in markers:
