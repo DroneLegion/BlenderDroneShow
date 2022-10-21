@@ -7,9 +7,9 @@ from typing import Any, Iterable, Iterator
 import bpy
 from bpy.types import Object, Operator
 
-from ..helpers import animation
-from ..helpers import drone as drone_helpers
-from ..helpers import led as led_helpers
+from ...helpers import animation
+from ...helpers import drone as drone_helpers
+from ...helpers import led as led_helpers
 
 
 def neighbour_pairs(sequence):
