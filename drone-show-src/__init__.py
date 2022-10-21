@@ -3,7 +3,7 @@ import bpy
 bl_info = {
     "name": "Drone show animation (.csv)",
     "author": "Artem Vasiunik & Arthur Golubtsov",
-    "version": (1, 2, 0),
+    "version": (1, 3, 0),
     "blender": (3, 2, 2),
     "location": "File > Export > Drone show animation (.csv)",
     "description": "Export > Drone show animation (.csv)",
