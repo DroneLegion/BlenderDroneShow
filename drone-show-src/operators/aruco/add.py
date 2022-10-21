@@ -10,7 +10,7 @@ __all__ = ("AddAruco", )
 
 class AddAruco(Operator, AddObjectHelper):
     bl_idname = "drone_show.add_aruco"
-    bl_label = "Add Aruco"
+    bl_label = "Add Aruco object"
     bl_description = "Create singular Aruco marker object"
     bl_options = {"REGISTER", "UNDO"}
 
@@ -78,7 +78,6 @@ class AddAruco(Operator, AddObjectHelper):
         layout.prop(self, "location")
         layout.prop(self, "rotation")
         layout.prop(self, "size")
-        layout.prop(self, "dictionary")
         layout.prop(self, "marker_id")
 
         row = layout.row(heading="White rim")
@@ -86,6 +85,8 @@ class AddAruco(Operator, AddObjectHelper):
         subrow = row.row()
         subrow.enabled = self.add_rim
         subrow.prop(self, "rim_size", text="Size")
+
+        layout.prop(self, "dictionary")
 
     def execute(self, context):
         mesh = aruco_helpers.get_marker_mesh()

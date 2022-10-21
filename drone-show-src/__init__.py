@@ -71,6 +71,7 @@ classes = (
     operators.SetLedColor,
     operators.AddAruco,
     operators.ExportAruco,
+    operators.GenerateArucoMap,
     operators.ImportAruco,
     ui.DronePanel,
     ui.DroneCoordsPanel,

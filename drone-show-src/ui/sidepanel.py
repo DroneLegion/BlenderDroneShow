@@ -63,3 +63,4 @@ class ArucoOperatorsPanel(Panel):
 
         col = layout.column(align=True)
         col.operator("drone_show.add_aruco")
+        col.operator("drone_show.generate_aruco_map")
