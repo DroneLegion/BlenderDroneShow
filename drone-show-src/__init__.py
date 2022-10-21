@@ -12,43 +12,6 @@ bl_info = {
     "category": "Import-Export",
 }
 
-
-def ensure_site_packages(packages):
-    if not packages:
-        return
-
-    import importlib.util
-    import os
-    import site
-    import sys
-
-    user_site_packages = site.getusersitepackages()
-    os.makedirs(user_site_packages, exist_ok=True)
-    sys.path.append(user_site_packages)
-
-    modules_to_install = [
-        module[1] for module in packages if not importlib.util.find_spec(module[0])
-    ]
-
-    if modules_to_install:
-        import subprocess
-
-        python_binary = sys.executable
-
-        subprocess.run([python_binary, "-m", "ensurepip"], check=True)
-        subprocess.run(
-            [python_binary, "-m", "pip", "install", *modules_to_install, "--user"],
-            check=True,
-        )
-
-
-ensure_site_packages(
-    [
-        ("numpy", "numpy"),
-        ("PIL", "Pillow"),
-    ]
-)
-
 from . import operators, ui
 from .properties import (
     ArucoObjectProperties,

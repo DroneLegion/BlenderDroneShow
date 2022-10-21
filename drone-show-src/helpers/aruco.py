@@ -1,10 +1,10 @@
 import json
 from pathlib import Path
 
-import bpy
 import numpy as np
+
+import bpy
 from mathutils import Vector
-from PIL import Image, ImageDraw
 
 with (Path(__file__).parent / Path("aruco_dict.json")).open("r") as f:
     aruco_dict = json.load(f)
@@ -19,14 +19,9 @@ aruco_sizes = {
 }
 
 
-def get_aruco_objects(context, selected=False) -> list[bpy.types.Object]:
-    objects = context.selected_objects if selected else context.scene.objects
-    return [obj for obj in objects if obj.aruco.is_aruco]
-
-
 def generate_marker(
     dict_name: str, marker_id: int, image_size: int = 512
-) -> Image.Image:
+) -> np.ndarray:
     aruco_bytes = aruco_dict[dict_name][marker_id]
     aruco_size = aruco_sizes[dict_name]
     bits = []
@@ -38,8 +33,8 @@ def generate_marker(
         for i in range(min(7, start - 1), -1, -1):
             bits.append((aruco_byte >> i) & 1)
 
-    out = Image.new("RGB", (image_size, image_size), (0, 0, 0))
-    draw = ImageDraw.Draw(out)
+    out = np.zeros(shape=(image_size, image_size, 4), dtype=np.float32)
+    out[:, :, 3] = 1.0
 
     black_rim_offset = 1
     pixel_size = image_size / (aruco_size + 2 * black_rim_offset)
@@ -49,17 +44,13 @@ def generate_marker(
             if not bits[i * aruco_size + j]:
                 continue
 
-            draw.rectangle(
-                (
-                    (j + 0 + black_rim_offset) * pixel_size,
-                    (i + 0 + black_rim_offset) * pixel_size,
-                    (j + 1 + black_rim_offset) * pixel_size,
-                    (i + 1 + black_rim_offset) * pixel_size,
-                ),
-                fill=(255, 255, 255),
-            )
+            x_start = round((j + 0 + black_rim_offset) * pixel_size)
+            y_start = round((i + 0 + black_rim_offset) * pixel_size)
+            x_end = round((j + 1 + black_rim_offset) * pixel_size)
+            y_end = round((i + 1 + black_rim_offset) * pixel_size)
 
-    # out.show()
+            out[y_start:y_end, x_start:x_end, :] = 1.0
+
     return out
 
 
@@ -90,12 +81,9 @@ def get_aruco_image(dict_name: str, marker_id: int, image_size=256):
     if image := bpy.data.images.get(name):
         return image
 
-    pil_image = generate_marker(dict_name, marker_id, image_size)
+    np_image = generate_marker(dict_name, marker_id, image_size)
     image = bpy.data.images.new(name=name, width=image_size, height=image_size)
-    byte_to_normalized = 1.0 / 255.0
-    image.pixels[:] = (
-        np.asarray(pil_image.convert("RGBA"), dtype=np.float32) * byte_to_normalized
-    ).ravel()
+    image.pixels = np_image.ravel()
     image.pack()
     return image
 
@@ -167,3 +155,8 @@ def get_rim_material() -> bpy.types.Material:
     link = links.new(node_principled.outputs["BSDF"], node_output.inputs["Surface"])
 
     return material
+
+
+def get_aruco_objects(context, selected=False) -> list[bpy.types.Object]:
+    objects = context.selected_objects if selected else context.scene.objects
+    return [obj for obj in objects if obj.aruco.is_aruco]
