@@ -10,7 +10,6 @@ from PIL import Image, ImageDraw
 with (Path(__file__).parent / Path("aruco_dict.json")).open("r") as f:
     aruco_dict = json.load(f)
 
-print(*aruco_dict.keys())
 
 aruco_sizes = {
     "aruco": 5,
@@ -19,6 +18,11 @@ aruco_sizes = {
     "6x6_1000": 6,
     "7x7_1000": 7,
 }
+
+
+def get_aruco_objects(context, selected=False) -> list[bpy.types.Object]:
+    objects = context.selected_objects if selected else context.scene.objects
+    return [obj for obj in objects if obj.aruco.is_aruco]
 
 
 def generate_marker(
@@ -32,14 +36,8 @@ def generate_marker(
     # translated from https://github.com/okalachev/arucogen/blob/master/main.js#L53
     for aruco_byte in aruco_bytes:
         start = bits_count - len(bits)
-        row = []
         for i in range(min(7, start - 1), -1, -1):
             bits.append((aruco_byte >> i) & 1)
-
-    print(bits)
-
-    for i in range(aruco_size):
-        print(bits[i * aruco_size : (i + 1) * aruco_size])
 
     out = Image.new("RGB", (image_size, image_size), (0, 0, 0))
     draw = ImageDraw.Draw(out)

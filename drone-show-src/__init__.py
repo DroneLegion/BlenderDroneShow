@@ -70,11 +70,13 @@ classes = (
     operators.SelectDrones,
     operators.SetLedColor,
     operators.AddAruco,
+    operators.ExportAruco,
     ui.DronePanel,
     ui.DroneCoordsPanel,
     ui.DroneLedPanel,
     ui.LedPanel,
     ui.ArucoPanel,
+    ui.ArucoCoordsPanel,
     ui.DroneOperatorsPanel,
     ui.LedOperatorsPanel,
     ui.CheckPanel,
@@ -82,9 +84,15 @@ classes = (
 )
 
 
-def menu_func(self, context):
+def export_animation_menu(self, context):
     self.layout.operator(
         operators.ExportAnimation.bl_idname, text="Drone show animation (.csv)"
+    )
+
+
+def export_aruco_menu(self, context):
+    self.layout.operator(
+        operators.ExportAruco.bl_idname, text="Aruco markers map (.txt)"
     )
 
 
@@ -102,7 +110,8 @@ def register():
 
     bpy.types.Object.aruco = bpy.props.PointerProperty(type=ArucoObjectProperties)
 
-    bpy.types.TOPBAR_MT_file_export.append(menu_func)
+    bpy.types.TOPBAR_MT_file_export.append(export_animation_menu)
+    bpy.types.TOPBAR_MT_file_export.append(export_aruco_menu)
 
 
 def unregister():
@@ -118,7 +127,8 @@ def unregister():
 
     del bpy.types.Object.aruco
 
-    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_export.remove(export_animation_menu)
+    bpy.types.TOPBAR_MT_file_export.remove(export_aruco_menu)
 
 
 if __name__ == "__main__":

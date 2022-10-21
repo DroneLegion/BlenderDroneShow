@@ -39,12 +39,18 @@ class DroneCoordsPanel(Panel):
         x, y, z = context.object.matrix_world.to_translation()
         yaw = context.object.matrix_world.to_euler("XYZ")[2]
 
-        row = layout.row()
+        col = layout.column()
+        col.label(text="Position (meters)")
+        row = col.row()
         row.label(text=f"X = {x:.2f}")
         row.label(text=f"Y = {y:.2f}")
         row.label(text=f"Z = {z:.2f}")
 
-        row = layout.row()
+        layout.separator()
+
+        col = layout.column()
+        col.label(text="Rotation (radians)")
+        row = col.row()
         row.label(text=f"yaw = {yaw:.2f} rad")
 
 

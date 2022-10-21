@@ -10,12 +10,14 @@ class DroneShowProperties(PropertyGroup):
         name="Check LEDs",
         description="Check LEDs material on drones",
         default=True,
+        options=set(),
     )
 
     check_speed: bpy.props.BoolProperty(
         name="Check speed",
         description="Check maximum drone movement speed",
         default=True,
+        options=set(),
     )
 
     speed_limit: bpy.props.FloatProperty(
@@ -33,6 +35,7 @@ class DroneShowProperties(PropertyGroup):
         name="Check distance",
         description="Check distance between drones",
         default=True,
+        options=set(),
     )
 
     distance_limit: bpy.props.FloatProperty(
@@ -50,6 +53,7 @@ class DroneShowProperties(PropertyGroup):
         name="Show detailed warnings",
         description="Show detailed animation check warnings",
         default=True,
+        options=set(),
     )
 
     # Led properties
@@ -68,6 +72,7 @@ class DroneObjectProperties(PropertyGroup):
     is_drone: bpy.props.BoolProperty(
         name="Is drone",
         default=False,
+        options=set(),
     )
 
 
@@ -75,6 +80,7 @@ class DroneLedProperties(PropertyGroup):
     is_led: bpy.props.BoolProperty(
         name="Is LED color",
         default=False,
+        options=set(),
     )
 
 
@@ -88,6 +94,7 @@ class ArucoObjectProperties(PropertyGroup):
     is_aruco: bpy.props.BoolProperty(
         name="Is Aruco",
         default=False,
+        options=set(),
     )
 
     dictionary: bpy.props.EnumProperty(
@@ -102,6 +109,7 @@ class ArucoObjectProperties(PropertyGroup):
         ],
         default="4x4_1000",
         update=aruco_updated,
+        options=set(),
     )
 
     marker_id: bpy.props.IntProperty(
@@ -111,4 +119,5 @@ class ArucoObjectProperties(PropertyGroup):
         min=0,
         max=1000,
         update=aruco_updated,
+        options=set(),
     )

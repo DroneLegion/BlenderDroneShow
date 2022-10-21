@@ -4,7 +4,6 @@ from contextlib import redirect_stdout
 from pathlib import Path
 
 import bpy
-from bpy.props import BoolProperty, FloatProperty, IntProperty, StringProperty
 from bpy.types import Operator, Panel
 from bpy_extras.io_utils import ExportHelper
 
@@ -21,7 +20,7 @@ class ExportAnimation(Operator, ExportHelper):
     filename_ext = ""
     use_filter_folder = True
 
-    filepath: StringProperty(
+    filepath: bpy.props.StringProperty(
         name="File Path",
         description="Directory path used for exporting CSV files",
         maxlen=1024,
