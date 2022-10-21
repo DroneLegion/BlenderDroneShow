@@ -26,7 +26,7 @@ class ExportAruco(Operator, ExportHelper):
     filter_glob: bpy.props.StringProperty(
         default="*.txt",
         options={'HIDDEN'},
-        maxlen=255,  # Max internal buffer length, longer would be clamped.
+        maxlen=255,
     )
 
     def draw(self, context):

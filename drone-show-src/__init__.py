@@ -71,6 +71,7 @@ classes = (
     operators.SetLedColor,
     operators.AddAruco,
     operators.ExportAruco,
+    operators.ImportAruco,
     ui.DronePanel,
     ui.DroneCoordsPanel,
     ui.DroneLedPanel,
@@ -96,6 +97,12 @@ def export_aruco_menu(self, context):
     )
 
 
+def import_aruco_menu(self, context):
+    self.layout.operator(
+        operators.ImportAruco.bl_idname, text="Aruco markers map (.txt)"
+    )
+
+
 # noinspection PyNoneFunctionAssignment
 def register():
     from bpy.utils import register_class
@@ -113,6 +120,8 @@ def register():
     bpy.types.TOPBAR_MT_file_export.append(export_animation_menu)
     bpy.types.TOPBAR_MT_file_export.append(export_aruco_menu)
 
+    bpy.types.TOPBAR_MT_file_import.append(import_aruco_menu)
+
 
 def unregister():
     from bpy.utils import unregister_class
@@ -129,6 +138,8 @@ def unregister():
 
     bpy.types.TOPBAR_MT_file_export.remove(export_animation_menu)
     bpy.types.TOPBAR_MT_file_export.remove(export_aruco_menu)
+
+    bpy.types.TOPBAR_MT_file_import.remove(import_aruco_menu)
 
 
 if __name__ == "__main__":

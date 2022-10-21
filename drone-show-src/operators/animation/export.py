@@ -18,7 +18,7 @@ __all__ = ("ExportAnimation", "ExportAnimationChecksPanel")
 
 class ExportAnimation(Operator, ExportHelper):
     bl_idname = "drone_show.export"
-    bl_label = "Export drone show animation"
+    bl_label = "Export animation"
     bl_description = "Export drone show animation to CSV files"
     filename_ext = ""
     use_filter_folder = True
