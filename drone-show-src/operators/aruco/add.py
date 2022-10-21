@@ -1,11 +1,11 @@
 import bpy
 from bpy.types import Operator
 from bpy_extras.object_utils import AddObjectHelper, object_data_add
-from mathutils import Vector, Matrix
+from mathutils import Matrix, Vector
 
 from ...helpers import aruco as aruco_helpers
 
-__all__ = ("AddAruco", )
+__all__ = ("AddAruco",)
 
 
 class AddAruco(Operator, AddObjectHelper):
@@ -78,15 +78,19 @@ class AddAruco(Operator, AddObjectHelper):
         layout.prop(self, "location")
         layout.prop(self, "rotation")
         layout.prop(self, "size")
+
+        layout.separator()
+
         layout.prop(self, "marker_id")
+        layout.prop(self, "dictionary")
+
+        layout.separator()
 
         row = layout.row(heading="White rim")
         row.prop(self, "add_rim", text="")
         subrow = row.row()
         subrow.enabled = self.add_rim
         subrow.prop(self, "rim_size", text="Size")
-
-        layout.prop(self, "dictionary")
 
     def execute(self, context):
         mesh = aruco_helpers.get_marker_mesh()
@@ -106,7 +110,13 @@ class AddAruco(Operator, AddObjectHelper):
             rim_object.matrix_parent_inverse = aruco_object.matrix_world.inverted()
 
             rim_object.matrix_local = Matrix.Translation(Vector((0, 0, -0.001)))
-            rim_object.dimensions = [self.size + self.rim_size*2, self.size + self.rim_size*2, 0]
+            rim_object.dimensions = [
+                self.size + self.rim_size * 2,
+                self.size + self.rim_size * 2,
+                0,
+            ]
+
+            rim_object.data.materials.append(aruco_helpers.get_rim_material())
 
             rim_object.select_set(False)
             aruco_object.select_set(True)

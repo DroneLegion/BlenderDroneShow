@@ -12,12 +12,11 @@ from ...helpers import drone as drone_helpers
 from ...helpers import led as led_helpers
 from ...ui import draw_check_properties
 
-
 __all__ = ("ExportAnimation", "ExportAnimationChecksPanel")
 
 
 class ExportAnimation(Operator, ExportHelper):
-    bl_idname = "drone_show.export"
+    bl_idname = "drone_show.export_animation"
     bl_label = "Export animation"
     bl_description = "Export drone show animation to CSV files"
     filename_ext = ""
@@ -119,7 +118,7 @@ class ExportAnimationChecksPanel(Panel):
         operator = context.space_data.active_operator
         if operator is None:
             return False
-        return operator.bl_idname == "DRONE_SHOW_OT_export"
+        return operator.bl_idname == "DRONE_SHOW_OT_export_animation"
 
     def draw_header(self, context):
         operator = context.space_data.active_operator

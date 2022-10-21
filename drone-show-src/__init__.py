@@ -17,11 +17,10 @@ def ensure_site_packages(packages):
     if not packages:
         return
 
-    import os
-    import sys
-    import site
-
     import importlib.util
+    import os
+    import site
+    import sys
 
     user_site_packages = site.getusersitepackages()
     os.makedirs(user_site_packages, exist_ok=True)
@@ -52,10 +51,10 @@ ensure_site_packages(
 
 from . import operators, ui
 from .properties import (
-    DroneShowProperties,
-    DroneObjectProperties,
-    DroneLedProperties,
     ArucoObjectProperties,
+    DroneLedProperties,
+    DroneObjectProperties,
+    DroneShowProperties,
 )
 
 classes = (
@@ -81,7 +80,7 @@ classes = (
     ui.ArucoCoordsPanel,
     ui.DroneOperatorsPanel,
     ui.LedOperatorsPanel,
-    ui.CheckPanel,
+    ui.AnimationPanel,
     ui.ArucoOperatorsPanel,
 )
 

@@ -3,7 +3,7 @@ from bpy.types import Operator
 
 from ...helpers import drone as drone_helpers
 
-__all__ = ("SelectDrones", )
+__all__ = ("SelectDrones",)
 
 
 class SelectDrones(Operator):

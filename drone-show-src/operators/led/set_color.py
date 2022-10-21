@@ -4,7 +4,7 @@ from bpy.types import Operator
 from ...helpers import drone as drone_helpers
 from ...helpers import led as led_helpers
 
-__all__ = ("SetLedColor", )
+__all__ = ("SetLedColor",)
 
 
 class SetLedColor(Operator):

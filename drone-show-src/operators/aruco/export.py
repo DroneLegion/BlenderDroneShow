@@ -6,13 +6,13 @@ from bpy_extras.io_utils import ExportHelper
 
 from ...helpers import aruco as aruco_helpers
 
-__all__ = ("ExportAruco", )
+__all__ = ("ExportAruco",)
 
 
 class ExportAruco(Operator, ExportHelper):
     bl_idname = "drone_show.export_aruco"
     bl_label = "Export Aruco map"
-    bl_description = "Export Aruco markers map"
+    bl_description = "Export Aruco markers map for drones"
     filename_ext = ".txt"
 
     filepath: bpy.props.StringProperty(
@@ -25,7 +25,7 @@ class ExportAruco(Operator, ExportHelper):
 
     filter_glob: bpy.props.StringProperty(
         default="*.txt",
-        options={'HIDDEN'},
+        options={"HIDDEN"},
         maxlen=255,
     )
 
@@ -48,14 +48,14 @@ class ExportAruco(Operator, ExportHelper):
 
             marker_id = aruco_object.aruco.marker_id
             data = (round(item, 3) for item in (size, x, y, z, rot_z, rot_y, rot_x))
-            markers.append((marker_id, ) + tuple(data))
+            markers.append((marker_id,) + tuple(data))
 
         markers.sort(key=lambda item: item[0])
 
         headers = ("# id", "length", "x", "y", "z", "rot_z", "rot_y", "rot_x")
         with path.open("w") as f:
-            f.write("".join([f"{item: <8}" for item in headers])+"\n")
+            f.write("".join([f"{item: <8}" for item in headers]) + "\n")
             for marker in markers:
-                f.write("".join([f"{item: <8}" for item in marker])+"\n")
+                f.write("".join([f"{item: <8}" for item in marker]) + "\n")
 
         return {"FINISHED"}

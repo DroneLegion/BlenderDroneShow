@@ -2,9 +2,8 @@ import json
 from pathlib import Path
 
 import bpy
-from mathutils import Vector
-
 import numpy as np
+from mathutils import Vector
 from PIL import Image, ImageDraw
 
 with (Path(__file__).parent / Path("aruco_dict.json")).open("r") as f:
@@ -140,3 +139,31 @@ def update_aruco_material(obj: bpy.types.Object):
         obj.data.materials[0] = material
     else:
         obj.data.materials.append(material)
+
+
+def get_rim_material() -> bpy.types.Material:
+    name = "Aruco marker white rim"
+
+    if material := bpy.data.materials.get(name):
+        return material
+
+    material = bpy.data.materials.new(name=name)
+
+    material.use_nodes = True
+    nodes = material.node_tree.nodes
+    links = material.node_tree.links
+
+    nodes.clear()
+
+    node_principled = nodes.new(type="ShaderNodeBsdfPrincipled")
+    node_principled.inputs["Base Color"].default_value = (1.0, 1.0, 1.0, 1.0)
+    node_principled.inputs["Specular"].default_value = 0.0
+    node_principled.inputs["Roughness"].default_value = 1.0
+    node_principled.location = 0, 0
+
+    node_output = nodes.new(type="ShaderNodeOutputMaterial")
+    node_output.location = 400, 0
+
+    link = links.new(node_principled.outputs["BSDF"], node_output.inputs["Surface"])
+
+    return material

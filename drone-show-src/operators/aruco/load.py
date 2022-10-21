@@ -3,10 +3,11 @@ from pathlib import Path
 import bpy
 from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper
+from bpy_extras.object_utils import object_data_add
 
 from ...helpers import aruco as aruco_helpers
 
-__all__ = ("ImportAruco", )
+__all__ = ("ImportAruco",)
 
 
 class ImportAruco(Operator, ImportHelper):
@@ -14,6 +15,8 @@ class ImportAruco(Operator, ImportHelper):
     bl_label = "Import Aruco map"
     bl_description = "Import Aruco map file as marker objects"
     filename_ext = ".txt"
+
+    bl_options = {"REGISTER", "UNDO"}
 
     filepath: bpy.props.StringProperty(
         name="File Path",
@@ -25,7 +28,7 @@ class ImportAruco(Operator, ImportHelper):
 
     filter_glob: bpy.props.StringProperty(
         default="*.txt",
-        options={'HIDDEN'},
+        options={"HIDDEN"},
         maxlen=255,
     )
 
@@ -81,6 +84,8 @@ class ImportAruco(Operator, ImportHelper):
         with path.open("r") as f:
             lines = f.readlines()
 
+        aruco_objects = []
+
         for line in lines:
             line = line.strip()
             if not line:
@@ -103,5 +108,27 @@ class ImportAruco(Operator, ImportHelper):
                 add_rim=self.add_rim,
                 rim_size=self.rim_size,
             )
+
+            aruco_objects.append(context.active_object)
+
+        if not aruco_objects:
+            self.report({"WARNING"}, "No Aruco markers found in the file")
+            return {"CANCELLED"}
+
+        empty_object = object_data_add(context, None)
+        empty_object.name = path.stem
+        empty_object.empty_display_type = "PLAIN_AXES"
+        empty_object.empty_display_size = 0.5
+
+        empty_object.location = bpy.context.scene.cursor.location
+
+        for aruco_object in aruco_objects:
+            aruco_object.parent = empty_object
+            aruco_object.matrix_parent_inverse = empty_object.matrix_world.inverted()
+
+            aruco_object.select_set(False)
+
+        empty_object.select_set(True)
+        context.view_layer.objects.active = empty_object
 
         return {"FINISHED"}

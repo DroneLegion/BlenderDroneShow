@@ -1,11 +1,15 @@
 import bpy
 from bpy.types import Operator
-from bpy_extras.object_utils import AddObjectHelper, object_data_add, add_object_align_init
-from mathutils import Vector, Euler, Matrix
+from bpy_extras.object_utils import (
+    AddObjectHelper,
+    add_object_align_init,
+    object_data_add,
+)
+from mathutils import Euler, Matrix, Vector
 
 from ...helpers import aruco as aruco_helpers
 
-__all__ = ("GenerateArucoMap", )
+__all__ = ("GenerateArucoMap",)
 
 
 class GenerateArucoMap(Operator, AddObjectHelper):
@@ -53,29 +57,12 @@ class GenerateArucoMap(Operator, AddObjectHelper):
         max=1000,
     )
 
-    add_rim: bpy.props.BoolProperty(
-        name="Add white rim",
-        description="Add white rim around markers",
-        default=True,
-    )
-
-    rim_size: bpy.props.FloatProperty(
-        name="Rim size",
-        description="Size of the white rim around markers",
-        unit="LENGTH",
-        default=0.05,
-        min=0,
-        soft_min=0.01,
-        soft_max=1,
-        step=1,
-    )
-
     markers_x: bpy.props.IntProperty(
         name="Markers X",
         description="Number of markers in X direction (rows)",
         min=1,
         soft_max=10,
-        default=5
+        default=5,
     )
 
     markers_y: bpy.props.IntProperty(
@@ -83,7 +70,7 @@ class GenerateArucoMap(Operator, AddObjectHelper):
         description="Number of markers in Y direction (columns)",
         min=1,
         soft_max=10,
-        default=5
+        default=5,
     )
 
     x_gap: bpy.props.FloatProperty(
@@ -122,8 +109,8 @@ class GenerateArucoMap(Operator, AddObjectHelper):
         name="Direction",
         description="Direction of markers enumeration",
         items=[
-            ("HORIZONTAL", "Horizontal", "Horizontal direction (along rows)"),
-            ("VERTICAL", "Vertical", "Vertical direction (along columns)"),
+            ("HORIZONTAL", "Horizontal X", "Horizontal direction X (along rows)"),
+            ("VERTICAL", "Vertical Y", "Vertical direction Y (along columns)"),
         ],
         default="VERTICAL",
     )
@@ -145,6 +132,28 @@ class GenerateArucoMap(Operator, AddObjectHelper):
         default="BOTTOM_LEFT",
     )
 
+    rim_type: bpy.props.EnumProperty(
+        name="Rim type",
+        description="Type of the white rim around markers",
+        items=[
+            ("NONE", "None", "No rim"),
+            ("INDIVIDUAL", "Individual", "Each marker has its own rim"),
+            ("MAP", "Map background", "All markers share the same background"),
+        ],
+        default="INDIVIDUAL",
+    )
+
+    rim_size: bpy.props.FloatProperty(
+        name="Rim size",
+        description="Size of the white rim around markers",
+        unit="LENGTH",
+        default=0.05,
+        min=0,
+        soft_min=0.01,
+        soft_max=1,
+        step=1,
+    )
+
     @classmethod
     def poll(cls, context):
         if not super().poll(context):
@@ -161,26 +170,32 @@ class GenerateArucoMap(Operator, AddObjectHelper):
         layout.prop(self, "rotation")
         layout.prop(self, "z_rotation")
         layout.prop(self, "size")
-        layout.prop(self, "markers_x")
-        layout.prop(self, "markers_y")
+
+        layout.separator()
+
         layout.prop(self, "x_gap")
         layout.prop(self, "y_gap")
+        layout.prop(self, "markers_x")
+        layout.prop(self, "markers_y")
+
+        layout.separator()
+
         layout.prop(self, "first_id")
+        layout.prop(self, "dictionary")
         layout.prop(self, "first_corner")
         layout.prop(self, "direction")
         layout.prop(self, "origin")
 
-        row = layout.row(heading="White rim")
-        row.prop(self, "add_rim", text="")
-        subrow = row.row()
-        subrow.enabled = self.add_rim
-        subrow.prop(self, "rim_size", text="Size")
+        layout.separator()
 
-        layout.prop(self, "dictionary")
+        layout.prop(self, "rim_type")
+        row = layout.row()
+        row.active = self.rim_type != "NONE"
+        row.prop(self, "rim_size")
 
     def execute(self, context):
-        total_x = (self.markers_x-1) * self.x_gap
-        total_y = (self.markers_y-1) * self.y_gap
+        total_x = (self.markers_x - 1) * self.x_gap
+        total_y = (self.markers_y - 1) * self.y_gap
 
         empty_object = object_data_add(context, None, operator=self)
         empty_object.name = "Aruco map"
@@ -239,9 +254,13 @@ class GenerateArucoMap(Operator, AddObjectHelper):
                     id_offset_y = 0
 
                 if self.direction == "HORIZONTAL":
-                    marker_id = self.first_id + id_offset_y * self.markers_x + id_offset_x
+                    marker_id = (
+                        self.first_id + id_offset_y * self.markers_x + id_offset_x
+                    )
                 else:
-                    marker_id = self.first_id + id_offset_x * self.markers_y + id_offset_y
+                    marker_id = (
+                        self.first_id + id_offset_x * self.markers_y + id_offset_y
+                    )
 
                 pos_x = x * self.x_gap + offset_x
                 pos_y = y * self.y_gap + offset_y
@@ -257,13 +276,36 @@ class GenerateArucoMap(Operator, AddObjectHelper):
                     size=self.size,
                     dictionary=self.dictionary,
                     marker_id=marker_id,
-                    add_rim=self.add_rim,
+                    add_rim=self.rim_type == "INDIVIDUAL",
                     rim_size=self.rim_size,
                 )
                 aruco_object = context.active_object
                 aruco_object.parent = empty_object
-                aruco_object.matrix_parent_inverse = empty_object.matrix_world.inverted()
+                aruco_object.matrix_parent_inverse = (
+                    empty_object.matrix_world.inverted()
+                )
                 aruco_object.select_set(False)
+
+        if self.rim_type == "MAP":
+            mesh = aruco_helpers.get_marker_mesh()
+            rim_object = object_data_add(context, mesh, operator=self)
+            rim_object.name = "Aruco map background"
+
+            rim_object.parent = empty_object
+            rim_object.matrix_parent_inverse = empty_object.matrix_world.inverted()
+
+            rim_object.matrix_local = Matrix.Translation(
+                Vector((total_x / 2 + offset_x, total_y / 2 + offset_y, -0.001))
+            )
+            rim_object.dimensions = [
+                total_x + self.size + self.rim_size * 2,
+                total_y + self.size + self.rim_size * 2,
+                0,
+            ]
+
+            rim_object.data.materials.append(aruco_helpers.get_rim_material())
+
+            rim_object.select_set(False)
 
         empty_object.select_set(True)
         bpy.context.view_layer.objects.active = empty_object
