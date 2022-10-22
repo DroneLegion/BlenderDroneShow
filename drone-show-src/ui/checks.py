@@ -1,3 +1,6 @@
+__all__ = ("draw_check_properties",)
+
+
 def draw_check_properties(drone_show, layout):
     # Yes this is a wierd way to do it, but it allows for checkboxes to align properly
     row = layout.row()

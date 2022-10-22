@@ -45,6 +45,7 @@ classes = (
     ui.LedOperatorsPanel,
     ui.AnimationPanel,
     ui.ArucoOperatorsPanel,
+    ui.AddMenu,
 )
 
 
@@ -66,6 +67,14 @@ def import_aruco_menu(self, context):
     )
 
 
+def add_menu(self, context):
+    self.layout.menu(
+        self.layout.menu(ui.AddMenu.bl_idname)
+    )
+
+# noinspection PyNoneFunctionAssignment
+
+
 # noinspection PyNoneFunctionAssignment
 def register():
     from bpy.utils import register_class
@@ -85,6 +94,8 @@ def register():
 
     bpy.types.TOPBAR_MT_file_import.append(import_aruco_menu)
 
+    bpy.types.VIEW3D_MT_add.append(add_menu)
+
 
 def unregister():
     from bpy.utils import unregister_class
@@ -103,6 +114,8 @@ def unregister():
     bpy.types.TOPBAR_MT_file_export.remove(export_aruco_menu)
 
     bpy.types.TOPBAR_MT_file_import.remove(import_aruco_menu)
+
+    bpy.types.VIEW3D_MT_add.remove(add_menu)
 
 
 if __name__ == "__main__":

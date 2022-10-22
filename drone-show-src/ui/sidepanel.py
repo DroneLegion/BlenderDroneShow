@@ -2,6 +2,8 @@ from bpy.types import Panel
 
 from .checks import draw_check_properties
 
+__all__ = ("DroneOperatorsPanel", "LedOperatorsPanel", "AnimationPanel", "ArucoOperatorsPanel")
+
 
 class DroneOperatorsPanel(Panel):
     bl_idname = "VIEW3D_PT_drone"
@@ -71,3 +73,6 @@ class ArucoOperatorsPanel(Panel):
         col = layout.column(align=True)
         col.operator("drone_show.import_aruco")
         col.operator("drone_show.export_aruco")
+
+        col = layout.column(align=True)
+        col.operator("outliner.orphans_purge", text="Purge unused")

@@ -2,6 +2,8 @@ from bpy.types import Panel
 
 from ..helpers import led as led_helpers
 
+__all__ = ("DronePanel", "DroneCoordsPanel", "DroneLedPanel")
+
 
 class DronePanel(Panel):
     bl_idname = "OBJECT_PT_drone"

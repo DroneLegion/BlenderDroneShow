@@ -1,5 +1,7 @@
 from bpy.types import Panel
 
+__all__ = ("ArucoPanel", "ArucoCoordsPanel")
+
 
 class ArucoPanel(Panel):
     bl_idname = "OBJECT_PT_aruco"
