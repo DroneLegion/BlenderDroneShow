@@ -2,6 +2,8 @@ from bpy.types import Panel
 
 from ..helpers import led as led_helpers
 
+__all__ = ("LedPanel",)
+
 
 class LedPanel(Panel):
     bl_idname = "MATERIAL_PT_led"

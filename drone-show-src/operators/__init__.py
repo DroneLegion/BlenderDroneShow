@@ -1,4 +1,4 @@
-from .check import CheckSwarmAnimation
-from .export import ExportAnimation, ExportAnimationChecksPanel
-from .selection import AssignDrones, SelectDrones
-from .led import SetLedColor
+from .animation import *
+from .aruco import *
+from .drone import *
+from .led import *

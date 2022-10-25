@@ -4,24 +4,25 @@ from contextlib import redirect_stdout
 from pathlib import Path
 
 import bpy
-from bpy.props import BoolProperty, FloatProperty, IntProperty, StringProperty
 from bpy.types import Operator, Panel
 from bpy_extras.io_utils import ExportHelper
 
-from ..helpers import animation as animation_helpers
-from ..helpers import drone as drone_helpers
-from ..helpers import led as led_helpers
-from ..ui import draw_check_properties
+from ...helpers import animation as animation_helpers
+from ...helpers import drone as drone_helpers
+from ...helpers import led as led_helpers
+from ...ui import draw_check_properties
+
+__all__ = ("ExportAnimation", "ExportAnimationChecksPanel")
 
 
 class ExportAnimation(Operator, ExportHelper):
-    bl_idname = "drone_show.export"
-    bl_label = "Export drone show animation"
+    bl_idname = "drone_show.export_animation"
+    bl_label = "Export animation"
     bl_description = "Export drone show animation to CSV files"
     filename_ext = ""
     use_filter_folder = True
 
-    filepath: StringProperty(
+    filepath: bpy.props.StringProperty(
         name="File Path",
         description="Directory path used for exporting CSV files",
         maxlen=1024,
@@ -107,15 +108,17 @@ class ExportAnimation(Operator, ExportHelper):
 
 
 class ExportAnimationChecksPanel(Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
+    bl_space_type = "FILE_BROWSER"
+    bl_region_type = "TOOL_PROPS"
     bl_label = "Animation Checks"
     bl_options = set()
 
     @classmethod
     def poll(cls, context):
         operator = context.space_data.active_operator
-        return operator.bl_idname == "DRONE_SHOW_OT_export"
+        if operator is None:
+            return False
+        return operator.bl_idname == "DRONE_SHOW_OT_export_animation"
 
     def draw_header(self, context):
         operator = context.space_data.active_operator
@@ -130,4 +133,3 @@ class ExportAnimationChecksPanel(Panel):
         draw_check_properties(drone_show, layout)
         layout.separator()
         layout.operator("drone_show.check", text="Check animation now")
-

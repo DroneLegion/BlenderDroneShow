@@ -2,6 +2,8 @@ from bpy.types import Panel
 
 from ..helpers import led as led_helpers
 
+__all__ = ("DronePanel", "DroneCoordsPanel", "DroneLedPanel")
+
 
 class DronePanel(Panel):
     bl_idname = "OBJECT_PT_drone"
@@ -12,7 +14,7 @@ class DronePanel(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None
+        return context.object is not None and not context.object.aruco.is_aruco
 
     def draw_header(self, context):
         self.layout.prop(context.object.drone, "is_drone", text="")
@@ -39,12 +41,18 @@ class DroneCoordsPanel(Panel):
         x, y, z = context.object.matrix_world.to_translation()
         yaw = context.object.matrix_world.to_euler("XYZ")[2]
 
-        row = layout.row()
+        col = layout.column()
+        col.label(text="Position (meters)")
+        row = col.row()
         row.label(text=f"X = {x:.2f}")
         row.label(text=f"Y = {y:.2f}")
         row.label(text=f"Z = {z:.2f}")
 
-        row = layout.row()
+        layout.separator()
+
+        col = layout.column()
+        col.label(text="Rotation (radians)")
+        row = col.row()
         row.label(text=f"yaw = {yaw:.2f} rad")
 
 

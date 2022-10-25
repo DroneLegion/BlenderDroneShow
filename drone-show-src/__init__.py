@@ -1,21 +1,9 @@
 import bpy
-from bpy.props import (
-    BoolProperty,
-    CollectionProperty,
-    EnumProperty,
-    FloatProperty,
-    IntProperty,
-    PointerProperty,
-    StringProperty,
-)
-from bpy.types import PropertyGroup
-
-from . import operators, ui
 
 bl_info = {
     "name": "Drone show animation (.csv)",
     "author": "Artem Vasiunik & Arthur Golubtsov",
-    "version": (1, 2, 0),
+    "version": (1, 3, 0),
     "blender": (3, 2, 2),
     "location": "File > Export > Drone show animation (.csv)",
     "description": "Export > Drone show animation (.csv)",
@@ -24,105 +12,67 @@ bl_info = {
     "category": "Import-Export",
 }
 
-
-class DroneShowProperties(PropertyGroup):
-    # Check properties
-    check_led: BoolProperty(
-        name="Check LEDs",
-        description="Check LEDs material on drones",
-        default=True,
-    )
-
-    check_speed: BoolProperty(
-        name="Check speed",
-        description="Check maximum drone movement speed",
-        default=True,
-    )
-
-    speed_limit: FloatProperty(
-        name="Speed limit",
-        description="Limit of maximum drone movement speed (m/s)",
-        unit="VELOCITY",
-        default=3,
-        min=0,
-        soft_min=0.5,
-        soft_max=20,
-        step=50,
-    )
-
-    check_distance: BoolProperty(
-        name="Check distance",
-        description="Check distance between drones",
-        default=True,
-    )
-
-    distance_limit: FloatProperty(
-        name="Distance limit",
-        description="Closest possible distance between drones (m)",
-        unit="LENGTH",
-        default=1.5,
-        min=0,
-        soft_min=0.5,
-        soft_max=10,
-        step=50,
-    )
-
-    detailed_warnings: bpy.props.BoolProperty(
-        name="Show detailed warnings",
-        description="Show detailed animation check warnings",
-        default=True,
-    )
-
-    # Led properties
-    led_color: bpy.props.FloatVectorProperty(
-        name="LED color",
-        description="Color of the LED to set",
-        subtype="COLOR",
-        size=4,
-        min=0.0,
-        max=1.0,
-        default=(1.0, 1.0, 1.0, 1.0),
-    )
-
-
-class DroneObjectProperties(PropertyGroup):
-    is_drone: BoolProperty(
-        name="Is drone",
-        default=False,
-    )
-
-
-class DroneLedProperties(PropertyGroup):
-    is_led: BoolProperty(
-        name="Is LED color",
-        default=False,
-    )
-
+from . import operators, ui
+from .properties import (
+    ArucoObjectProperties,
+    DroneLedProperties,
+    DroneObjectProperties,
+    DroneShowProperties,
+)
 
 classes = (
     DroneShowProperties,
     DroneObjectProperties,
     DroneLedProperties,
+    ArucoObjectProperties,
     operators.ExportAnimation,
     operators.ExportAnimationChecksPanel,
     operators.CheckSwarmAnimation,
     operators.AssignDrones,
     operators.SelectDrones,
     operators.SetLedColor,
+    operators.AddAruco,
+    operators.ExportAruco,
+    operators.GenerateArucoMap,
+    operators.ImportAruco,
     ui.DronePanel,
     ui.DroneCoordsPanel,
     ui.DroneLedPanel,
     ui.LedPanel,
+    ui.ArucoPanel,
+    ui.ArucoCoordsPanel,
     ui.DroneOperatorsPanel,
     ui.LedOperatorsPanel,
-    ui.CheckPanel,
+    ui.AnimationPanel,
+    ui.ArucoOperatorsPanel,
+    ui.AddMenu,
 )
 
 
-def menu_func(self, context):
+def export_animation_menu(self, context):
     self.layout.operator(
         operators.ExportAnimation.bl_idname, text="Drone show animation (.csv)"
     )
+
+
+def export_aruco_menu(self, context):
+    self.layout.operator(
+        operators.ExportAruco.bl_idname, text="Aruco markers map (.txt)"
+    )
+
+
+def import_aruco_menu(self, context):
+    self.layout.operator(
+        operators.ImportAruco.bl_idname, text="Aruco markers map (.txt)"
+    )
+
+
+def add_menu(self, context):
+    self.layout.menu(
+        self.layout.menu(ui.AddMenu.bl_idname)
+    )
+
+# noinspection PyNoneFunctionAssignment
 
 
 # noinspection PyNoneFunctionAssignment
@@ -132,11 +82,19 @@ def register():
     for cls in classes:
         register_class(cls)
 
-    bpy.types.Scene.drone_show = PointerProperty(type=DroneShowProperties)
-    bpy.types.Object.drone = PointerProperty(type=DroneObjectProperties)
-    bpy.types.Material.led = PointerProperty(type=DroneLedProperties)
+    bpy.types.Scene.drone_show = bpy.props.PointerProperty(type=DroneShowProperties)
 
-    bpy.types.TOPBAR_MT_file_export.append(menu_func)
+    bpy.types.Object.drone = bpy.props.PointerProperty(type=DroneObjectProperties)
+    bpy.types.Material.led = bpy.props.PointerProperty(type=DroneLedProperties)
+
+    bpy.types.Object.aruco = bpy.props.PointerProperty(type=ArucoObjectProperties)
+
+    bpy.types.TOPBAR_MT_file_export.append(export_animation_menu)
+    bpy.types.TOPBAR_MT_file_export.append(export_aruco_menu)
+
+    bpy.types.TOPBAR_MT_file_import.append(import_aruco_menu)
+
+    bpy.types.VIEW3D_MT_add.append(add_menu)
 
 
 def unregister():
@@ -146,10 +104,18 @@ def unregister():
         unregister_class(cls)
 
     del bpy.types.Scene.drone_show
+
     del bpy.types.Object.drone
     del bpy.types.Material.led
 
-    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
+    del bpy.types.Object.aruco
+
+    bpy.types.TOPBAR_MT_file_export.remove(export_animation_menu)
+    bpy.types.TOPBAR_MT_file_export.remove(export_aruco_menu)
+
+    bpy.types.TOPBAR_MT_file_import.remove(import_aruco_menu)
+
+    bpy.types.VIEW3D_MT_add.remove(add_menu)
 
 
 if __name__ == "__main__":

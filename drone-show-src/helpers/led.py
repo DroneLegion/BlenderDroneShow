@@ -42,7 +42,11 @@ def _get_material_node_input(material: Material):
     )
 
 
-def set_material_color(material: Material, color: tuple[float, float, float, float], keyframe: Optional[int] = None):
+def set_material_color(
+    material: Material,
+    color: tuple[float, float, float, float],
+    keyframe: Optional[int] = None,
+):
     # color = tuple(component / 255 for component in color)
 
     if material.use_nodes:

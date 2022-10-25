@@ -1,8 +1,10 @@
 import bpy
 from bpy.types import Operator
 
-from ..helpers import drone as drone_helpers
-from ..helpers import led as led_helpers
+from ...helpers import drone as drone_helpers
+from ...helpers import led as led_helpers
+
+__all__ = ("SetLedColor",)
 
 
 class SetLedColor(Operator):
@@ -12,10 +14,12 @@ class SetLedColor(Operator):
 
     def execute(self, context):
         drone_show = context.scene.drone_show
-        drone_objects = drone_helpers.get_drone_objects(context, selected=bool(context.selected_objects))
+        drone_objects = drone_helpers.get_drone_objects(
+            context, selected=bool(context.selected_objects)
+        )
         if not drone_objects:
             self.report({"WARNING"}, "No drones selected or available")
-            return {'CANCELLED'}
+            return {"CANCELLED"}
 
         count = 0
         for drone_obj in drone_objects:
@@ -25,7 +29,9 @@ class SetLedColor(Operator):
                 self.report({"WARNING"}, f"Drone '{drone_obj.name}': {str(e)}")
                 continue
             else:
-                led_helpers.set_material_color(led_material, drone_show.led_color, context.scene.frame_current)
+                led_helpers.set_material_color(
+                    led_material, drone_show.led_color, context.scene.frame_current
+                )
                 count += 1
 
         self.report({"INFO"}, f"Set LED color to {count} drones")
