@@ -3,7 +3,7 @@ import bpy
 bl_info = {
     "name": "Drone show animation (.csv)",
     "author": "Artem Vasiunik & Arthur Golubtsov",
-    "version": (1, 3, 0),
+    "version": (1, 4, 0),
     "blender": (3, 2, 2),
     "location": "File > Export > Drone show animation (.csv)",
     "description": "Export > Drone show animation (.csv)",
@@ -31,6 +31,7 @@ classes = (
     operators.AssignDrones,
     operators.SelectDrones,
     operators.SetLedColor,
+    operators.SetLedRainbow,
     operators.AddAruco,
     operators.ExportAruco,
     operators.GenerateArucoMap,
@@ -68,9 +69,8 @@ def import_aruco_menu(self, context):
 
 
 def add_menu(self, context):
-    self.layout.menu(
-        self.layout.menu(ui.AddMenu.bl_idname)
-    )
+    self.layout.menu(self.layout.menu(ui.AddMenu.bl_idname))
+
 
 # noinspection PyNoneFunctionAssignment
 

@@ -1,7 +1,5 @@
 import itertools
 import math
-from collections import defaultdict
-from dataclasses import dataclass
 from typing import Any, Iterable, Iterator
 
 import bpy

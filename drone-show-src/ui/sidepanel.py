@@ -35,6 +35,9 @@ class LedOperatorsPanel(Panel):
         col.prop(drone_show, "led_color", text="")
         col.operator("drone_show.set_leds")
 
+        col = layout.column(align=True)
+        col.operator("drone_show.set_leds_rainbow")
+
 
 class AnimationPanel(Panel):
     bl_idname = "VIEW3D_PT_animation"
