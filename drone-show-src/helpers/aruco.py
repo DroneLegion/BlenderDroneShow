@@ -19,9 +19,7 @@ aruco_sizes = {
 }
 
 
-def generate_marker(
-    dict_name: str, marker_id: int, image_size: int = 512
-) -> np.ndarray:
+def generate_marker(dict_name: str, marker_id: int, image_size: int = 512) -> np.ndarray:
     aruco_bytes = aruco_dict[dict_name][marker_id]
     aruco_size = aruco_sizes[dict_name]
     bits = []
@@ -102,7 +100,7 @@ def get_aruco_material(dict_name: str, marker_id: int) -> bpy.types.Material:
     nodes.clear()
 
     node_principled = nodes.new(type="ShaderNodeBsdfPrincipled")
-    node_principled.inputs["Specular"].default_value = 0.0
+    node_principled.inputs["Specular IOR Level"].default_value = 0.0
     node_principled.inputs["Roughness"].default_value = 1.0
     node_principled.location = 0, 0
 
@@ -114,8 +112,8 @@ def get_aruco_material(dict_name: str, marker_id: int) -> bpy.types.Material:
     node_output = nodes.new(type="ShaderNodeOutputMaterial")
     node_output.location = 400, 0
 
-    link = links.new(node_tex.outputs["Color"], node_principled.inputs["Base Color"])
-    link = links.new(node_principled.outputs["BSDF"], node_output.inputs["Surface"])
+    links.new(node_tex.outputs["Color"], node_principled.inputs["Base Color"])
+    links.new(node_principled.outputs["BSDF"], node_output.inputs["Surface"])
 
     return material
 
@@ -145,14 +143,14 @@ def get_rim_material() -> bpy.types.Material:
 
     node_principled = nodes.new(type="ShaderNodeBsdfPrincipled")
     node_principled.inputs["Base Color"].default_value = (1.0, 1.0, 1.0, 1.0)
-    node_principled.inputs["Specular"].default_value = 0.0
+    node_principled.inputs["Specular IOR Level"].default_value = 0.0
     node_principled.inputs["Roughness"].default_value = 1.0
     node_principled.location = 0, 0
 
     node_output = nodes.new(type="ShaderNodeOutputMaterial")
     node_output.location = 400, 0
 
-    link = links.new(node_principled.outputs["BSDF"], node_output.inputs["Surface"])
+    links.new(node_principled.outputs["BSDF"], node_output.inputs["Surface"])
 
     return material
 

@@ -4,7 +4,7 @@ bl_info = {
     "name": "Drone show animation (.csv)",
     "author": "Artem Vasiunik & Arthur Golubtsov",
     "version": (1, 4, 0),
-    "blender": (3, 2, 2),
+    "blender": (4, 0, 0),
     "location": "File > Export > Drone show animation (.csv)",
     "description": "Export > Drone show animation (.csv)",
     "doc_url": "https://github.com/DroneLegion/BlenderDroneShow/blob/master/README.md",
