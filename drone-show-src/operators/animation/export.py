@@ -36,9 +36,28 @@ class ExportAnimation(Operator, ExportHelper):
         default=True,
     )
 
+    coordinate_system: bpy.props.EnumProperty(
+        name="Coordinate system",
+        description="Coordinate system to use for exporting",
+        items=(
+            ("GLOBAL", "Global", "Global coordinate system"),
+            ("LOCAL", "Local", "Local coordinate system (from drone's start position)"),
+        ),
+        default="GLOBAL",
+    )
+    
+    @property
+    def local_coordinates(self):
+        return self.coordinate_system == "LOCAL"
+
     def draw(self, context):
         drone_show = context.scene.drone_show
         layout = self.layout
+
+        column = layout.column()
+        column.label(text="Coordinate system:")
+        row = column.row()
+        row.prop(self, "coordinate_system", expand=True)
 
     def execute(self, context):
         base_dir = Path(self.filepath)
@@ -68,23 +87,17 @@ class ExportAnimation(Operator, ExportHelper):
         for drone_num, drone_obj in enumerate(drone_objects):
             filepath = base_dir / f"{drone_obj.name}.csv"
             with open(filepath, "w") as csv_file:
-                animation_writer = csv.writer(
-                    csv_file, delimiter=",", quotechar="|", quoting=csv.QUOTE_MINIMAL
-                )
+                animation_writer = csv.writer(csv_file, delimiter=",", quotechar="|", quoting=csv.QUOTE_MINIMAL)
                 animation_writer.writerow([Path(bpy.data.filepath).stem])
 
                 try:
                     led_material = led_helpers.get_led_material(drone_obj)
-                    led_helpers.get_material_color(
-                        led_material
-                    )  # try getting material color to probe for errors
+                    led_helpers.get_material_color(led_material)  # try getting material color to probe for errors
                 except led_helpers.LedError as e:
                     led_material = None
                     self.report({"WARNING"}, f"Drone '{drone_obj.name}': {str(e)}")
 
-                frames = animation_helpers.extract_animation(
-                    context.scene, drone_obj, led_material
-                )
+                frames = animation_helpers.extract_animation(context.scene, drone_obj, led_material, self.local_coordinates)
                 for frame in frames:
                     animation_writer.writerow(
                         (
