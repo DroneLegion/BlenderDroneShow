@@ -8,7 +8,7 @@ Export result is a folder with .csv files where each line  in file represents a 
 * `yaw` of an object in radians
 * `red, green, blue` values of the color of an object, each is integer from 0 to 255
 
-* 
+  
 1. Open Blender
 2. Go to **Edit > Preferences > Add-ons**
 3. Click **Install from File...**
