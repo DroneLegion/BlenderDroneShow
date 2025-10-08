@@ -100,7 +100,10 @@ def get_aruco_material(dict_name: str, marker_id: int) -> bpy.types.Material:
     nodes.clear()
 
     node_principled = nodes.new(type="ShaderNodeBsdfPrincipled")
-    node_principled.inputs["Specular IOR Level"].default_value = 0.0
+    if "Specular IOR Level" in node_principled.inputs:
+        node_principled.inputs["Specular IOR Level"].default_value = 0.0
+    elif "Specular" in node_principled.inputs:
+        node_principled.inputs["Specular"].default_value = 0.0
     node_principled.inputs["Roughness"].default_value = 1.0
     node_principled.location = 0, 0
 
@@ -143,7 +146,10 @@ def get_rim_material() -> bpy.types.Material:
 
     node_principled = nodes.new(type="ShaderNodeBsdfPrincipled")
     node_principled.inputs["Base Color"].default_value = (1.0, 1.0, 1.0, 1.0)
-    node_principled.inputs["Specular IOR Level"].default_value = 0.0
+    if "Specular IOR Level" in node_principled.inputs:
+        node_principled.inputs["Specular IOR Level"].default_value = 0.0
+    elif "Specular" in node_principled.inputs:
+        node_principled.inputs["Specular"].default_value = 0.0
     node_principled.inputs["Roughness"].default_value = 1.0
     node_principled.location = 0, 0
 
